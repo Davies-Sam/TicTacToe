@@ -27,6 +27,8 @@ board = [
     [0,0,0]
 ]
 
+
+
 # Draw board lines
 def drawLines():
     pygame.draw.line(window, (255,255,255), (w/3, 0), (w/3,h))
@@ -34,27 +36,71 @@ def drawLines():
     pygame.draw.line(window, (255,255,255), (0, h/3), (w,h/3))
     pygame.draw.line(window, (255,255,255), (0, 2*h/3), (w,2*h/3))
 
+# Draw player moves
+def drawMoves():
+    s = 0
+    for i, row in enumerate(board):
+        for j, square in enumerate(row):
+            if square != 0:
+                if square == 2:
+                    print(square)
+                    pygame.draw.circle(window, (255,255,255), getSquareLocation(s), int(radius/6), 2)
+                else:
+                    topLeft = ( int( getSquareLocation(s)[0] - w/6) , int(getSquareLocation(s)[1] - h/6))
+                    topRight = ( int( getSquareLocation(s)[0] + w/6) , int(getSquareLocation(s)[1] - h/6))
+                    botLeft = ( int( getSquareLocation(s)[0] - w/6) , int(getSquareLocation(s)[1] + h/6))
+                    botRight = ( int( getSquareLocation(s)[0] + w/6) , int(getSquareLocation(s)[1] + h/6))
+                    pygame.draw.line(window, (255,255,255), topLeft, botRight)
+                    pygame.draw.line(window, (255,255,255), botLeft, topRight)
+            s+=1
+
+
+# Update the board
+def updateBoard(num, player):
+    if player == 'X':
+        marker = 1
+    else:
+        marker = 2
+    if num == 0:
+        board[0][0] = marker
+    elif num == 1:
+        board[0][1] = marker
+    elif num == 2:
+        board[0][2] = marker
+    elif num == 3:
+        board[1][0] = marker
+    elif num == 4:
+        board[1][1] = marker
+    elif num == 5:
+        board[1][2] = marker
+    elif num == 6:
+        board[2][0] = marker
+    elif num == 7:
+        board[2][1] = marker
+    elif num == 8:
+        board[2][2] = marker
 
 # Get Location of square
+
 def getSquareLocation(num):
     if num == 0:
-        return ( 0 , int(h/3) )
+        return ( int(w/6) , int(h/6) )
     elif num == 1:
-        return ( 0 , int(w/3) )
+        return ( int(w/2) , int(h/6) )
     elif num == 2:
-        return ( 0 , int(w/3) )
+        return ( int(w - w/6) , int(h/6) )
     elif num == 3:
-        return ( 0 , int(w/3) )
+        return ( int(w/6) , int(h/2) )
     elif num == 4:
         return ( int(w/2) , int(h/2) )
     elif num == 5:
-        return ( 0 , int(w/3) )
+        return ( int(w - w/6) , int(h/2) )
     elif num == 6:
-        return ( 0 , int(w/3) )
+        return ( int(w/6) , int(h - h/6) )
     elif num == 7:
-        return ( 0 , int(w/3) )
+        return ( int(w/2) , int(h - h/6) )
     elif num == 8:
-        return ( 0 , int(w/3) )
+        return ( int(w - w/6) , int(h - h/6) )
     
 
 # Determine which square the mouse is in
@@ -96,7 +142,8 @@ def getSquarefromMouse(x):
         return 8
    
 
-window.fill((0,0,20)) 
+
+
 # Game Loop
 while not gameOver:
     w, h = pygame.display.get_surface().get_size()
@@ -112,7 +159,7 @@ while not gameOver:
     #window.blit(icon, (w/2,h/2))
     #pygame.draw.circle(window, (255,255,255), (int(w/2), int(h/2)), int(radius/6) ,2)
     drawLines()
-
+    drawMoves()
     for event in pygame.event.get():
         if event.type == QUIT:
             gameOver = True
@@ -121,11 +168,8 @@ while not gameOver:
         elif event.type == MOUSEBUTTONDOWN:
             square = getSquarefromMouse(pygame.mouse.get_pos())
             squareLoc = getSquareLocation(square)
-            #instead of drawing inside this elif, just update the board arrays
-            print(squareLoc)
-            pygame.draw.circle(window, (255,255,255), squareLoc, int(radius/6) , 2)
-            pygame.display.update()
-        
+            updateBoard(square, player)
+
     if bool(pygame.mouse.get_focused()):
         getSquarefromMouse(pygame.mouse.get_pos())
     
