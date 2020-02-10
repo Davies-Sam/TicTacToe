@@ -27,45 +27,100 @@ board = [
     [-3, -2, -1]
 ]
 
+# restart the game
+def resetBoard():
+    board[0] = [-9, -8, -7]
+    board[1] = [-6, -5, -4]
+    board[2] = [-3, -2, -1]
+
+# Check if either player won, Draw a line showing the win
 def checkWin():
     if board[0][0] == board[1][1] == board[2][2]:
+        pygame.draw.line(window, (255, 0, 0), (0,0), (w,h), 20)
         return True
     elif board[0][2] == board[1][1] == board[2][0]:
+        pygame.draw.line(window, (255, 0, 0), (0,h), (w,0), 20)
         return True
     elif board[0][0] == board[0][1] == board[0][2]:
+        pygame.draw.line(window, (255, 0, 0), (0,h/6), (w,h/6), 20)
         return True
     elif board[1][0] == board[1][1] == board[1][2]:
+        pygame.draw.line(window, (255, 0, 0), (0,h/2), (w,h/2), 20)
         return True
     elif board[2][0] == board[2][1] == board[2][2]:
+        pygame.draw.line(window, (255, 0, 0), (0,h - h/6), (w, h - h/6), 20)
         return True
     elif board[0][0] == board[1][0] == board[2][0]:
+        pygame.draw.line(window, (255, 0, 0), (w/6,0), (w/6,h), 20)
         return True
     elif board[0][1] == board[1][1] == board[2][1]:
+        pygame.draw.line(window, (255, 0, 0), (w/2,0), (w/2,h), 20)
         return True
     elif board[0][2] == board[1][2] == board[2][2]:
+        pygame.draw.line(window, (255, 0, 0), (w - w/6 ,0), (w - w/6,h), 20)
         return True
     else:
         return False
 
+# check for a draw
+def checkDraw():
+    if not checkWin() and turns == 9:
+        return True
+    else:
+        return False
+
+
 # Draw Text
 def drawText():
-    
     text = font.render("%s's turn" % player, True, (0,255,0), (0,0,255))
     textRect= text.get_rect()
     textRect.center = (w/2,0 + h/20)
     window.blit(text,textRect)
+    pygame.display.update()
 
 # Draw board lines
-def drawLines():
-    
+def drawLines():   
     pygame.draw.line(window, (255,255,255), (w/3, 0), (w/3,h))
     pygame.draw.line(window, (255,255,255), (2*w/3, 0), (2*w/3,h))
     pygame.draw.line(window, (255,255,255), (0, h/3), (w,h/3))
     pygame.draw.line(window, (255,255,255), (0, 2*h/3), (w,2*h/3))
+    pygame.display.update()
+
+
+# Check if user wants to play again
+def playAgain(num):
+    if num == 1:
+        text = font.render("%s WON ! SPACE=PLAY AGAIN - OTHER=EXIT" % player, True, (255,255,255), (0,0,0))
+        textRect = text.get_rect()
+        textRect.center = (w/2,h/2)
+        window.blit(text,textRect)
+        pygame.display.update()
+    elif num == 0:
+        text = font.render("DRAW! SPACE=PLAY AGAIN - OTHER=EXIT", True, (255,255,255), (0,0,0))
+        textRect = text.get_rect()
+        textRect.center = (w/2,h/2)
+        window.blit(text,textRect)
+        pygame.display.update()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    resetBoard()
+                    window.fill((0,0,0))
+                    pygame.display.update()
+                    return False
+                else:
+                    return True
+
+   
+        
+  
 
 # Draw player moves
 def drawMoves():
-    
     s = 0
     for i, row in enumerate(board):
         for j, square in enumerate(row):
@@ -80,6 +135,8 @@ def drawMoves():
                     pygame.draw.line(window, (255,255,255), topLeft, botRight)
                     pygame.draw.line(window, (255,255,255), botLeft, topRight)
             s+=1
+    pygame.display.update()
+
 
 
 # Update the board
@@ -171,16 +228,18 @@ def getSquarefromMouse(x):
         return 8
    
 
-
 player = 'X'
 # Game Loop
+turns = 0
 while not gameOver:
+    print(turns)
+    #get new window dimensions
     w, h = pygame.display.get_surface().get_size()
     if w > h:
         radius = h
     else:
-        radius = w
 
+        radius = w
     drawText()
     drawLines()
     drawMoves()
@@ -192,15 +251,23 @@ while not gameOver:
             window = pygame.display.set_mode(event.dict['size'], HWSURFACE|DOUBLEBUF|RESIZABLE)
         elif event.type == MOUSEBUTTONDOWN:
             square = getSquarefromMouse(pygame.mouse.get_pos())
-            squareLoc = getSquareLocation(square)
             updateBoard(square, player)
-            gameOver = checkWin()
-            if gameOver:
-                print("player %s won!" % player)
+            drawMoves()
+            turns += 1
+            gameOver = checkWin() or checkDraw()
+            if checkDraw():
+                gameOver = playAgain(0)
+                turns = 0
+            elif checkWin():
+                gameOver = playAgain(1)
+                turns = 0     
             else:
                 if player == 'X':
                     player = 'O'
                 else:
                     player = 'X'
+
     pygame.display.update()
+
+            
     
