@@ -22,15 +22,42 @@ gameOver = False
 
 # Representation of game board
 board = [
-    [0,0,0],
-    [0,0,0],
-    [0,0,0]
+    [-9, -8, -7],
+    [-6, -5, -4],
+    [-3, -2, -1]
 ]
 
+def checkWin():
+    if board[0][0] == board[1][1] == board[2][2]:
+        return True
+    elif board[0][2] == board[1][1] == board[2][0]:
+        return True
+    elif board[0][0] == board[0][1] == board[0][2]:
+        return True
+    elif board[1][0] == board[1][1] == board[1][2]:
+        return True
+    elif board[2][0] == board[2][1] == board[2][2]:
+        return True
+    elif board[0][0] == board[1][0] == board[2][0]:
+        return True
+    elif board[0][1] == board[1][1] == board[2][1]:
+        return True
+    elif board[0][2] == board[1][2] == board[2][2]:
+        return True
+    else:
+        return False
 
+# Draw Text
+def drawText():
+    
+    text = font.render("%s's turn" % player, True, (0,255,0), (0,0,255))
+    textRect= text.get_rect()
+    textRect.center = (w/2,0 + h/20)
+    window.blit(text,textRect)
 
 # Draw board lines
 def drawLines():
+    
     pygame.draw.line(window, (255,255,255), (w/3, 0), (w/3,h))
     pygame.draw.line(window, (255,255,255), (2*w/3, 0), (2*w/3,h))
     pygame.draw.line(window, (255,255,255), (0, h/3), (w,h/3))
@@ -38,14 +65,14 @@ def drawLines():
 
 # Draw player moves
 def drawMoves():
+    
     s = 0
     for i, row in enumerate(board):
         for j, square in enumerate(row):
             if square != 0:
                 if square == 2:
-                    print(square)
                     pygame.draw.circle(window, (255,255,255), getSquareLocation(s), int(radius/6), 2)
-                else:
+                elif square == 1:
                     topLeft = ( int( getSquareLocation(s)[0] - w/6) , int(getSquareLocation(s)[1] - h/6))
                     topRight = ( int( getSquareLocation(s)[0] + w/6) , int(getSquareLocation(s)[1] - h/6))
                     botLeft = ( int( getSquareLocation(s)[0] - w/6) , int(getSquareLocation(s)[1] + h/6))
@@ -83,6 +110,7 @@ def updateBoard(num, player):
 # Get Location of square
 
 def getSquareLocation(num):
+    
     if num == 0:
         return ( int(w/6) , int(h/6) )
     elif num == 1:
@@ -105,6 +133,7 @@ def getSquareLocation(num):
 
 # Determine which square the mouse is in
 def getSquarefromMouse(x):
+   
     width, height = int(w/3), int(h/3)
     row0height = range(0, height)
     row1height = range(height, 2*height)
@@ -143,23 +172,19 @@ def getSquarefromMouse(x):
    
 
 
-
+player = 'X'
 # Game Loop
 while not gameOver:
     w, h = pygame.display.get_surface().get_size()
-    player = "X"
-    text = font.render("%s's turn" % player, True, (0,255,0), (0,0,255))
-    textRect= text.get_rect()
-    textRect.center = (w/2,0 + h/20)
-    window.blit(text,textRect)
     if w > h:
         radius = h
     else:
         radius = w
-    #window.blit(icon, (w/2,h/2))
-    #pygame.draw.circle(window, (255,255,255), (int(w/2), int(h/2)), int(radius/6) ,2)
+
+    drawText()
     drawLines()
     drawMoves()
+
     for event in pygame.event.get():
         if event.type == QUIT:
             gameOver = True
@@ -169,9 +194,13 @@ while not gameOver:
             square = getSquarefromMouse(pygame.mouse.get_pos())
             squareLoc = getSquareLocation(square)
             updateBoard(square, player)
-
-    if bool(pygame.mouse.get_focused()):
-        getSquarefromMouse(pygame.mouse.get_pos())
-    
+            gameOver = checkWin()
+            if gameOver:
+                print("player %s won!" % player)
+            else:
+                if player == 'X':
+                    player = 'O'
+                else:
+                    player = 'X'
     pygame.display.update()
     
