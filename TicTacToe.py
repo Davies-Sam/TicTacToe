@@ -20,12 +20,18 @@ pygame.display.set_icon(icon)
 """
 font = pygame.font.Font('freesansbold.ttf', 16)
 
+
 # Boolean for game loop
 gameOver = False
 
 #global variables for the start of game
 turns = 0
 player = 'X'
+w, h = pygame.display.get_surface().get_size()
+if w > h:
+    radius = h
+else:
+    radius = w
 
 # Representation of game board
 board = [
@@ -36,9 +42,20 @@ board = [
 
 # restart the game
 def resetBoard():
-    board[0] = [-9, -8, -7]
-    board[1] = [-6, -5, -4]
-    board[2] = [-3, -2, -1]
+    global board
+    board = [
+    [-9, -8, -7],
+    [-6, -5, -4],
+    [-3, -2, -1]
+]
+# Update window dimensions
+def updateWindow():
+    global w, h, radius
+    w, h = pygame.display.get_surface().get_size()
+    if w > h:
+        radius = h
+    else:
+        radius = w
 
 # Check if either player won, Draw a line showing the win
 def checkWin():
@@ -75,7 +92,6 @@ def checkDraw():
         return True
     else:
         return False
-
 
 # Draw Text
 def drawText():
@@ -159,52 +175,51 @@ def updateBoard(num, player):
         if board[0][0] != 1 and board[0][0] != 2:
             board[0][0] = marker
             turns += 1
-            nextPlayer()
+         
     elif num == 1:
         if board[0][1] != 1 and board[0][1] != 2:
             board[0][1] = marker
             turns += 1
-            nextPlayer()
+          
     elif num == 2:
         if board[0][2] != 1 and board[0][2] != 2:
             board[0][2] = marker
             turns += 1
-            nextPlayer()
+           
     elif num == 3:      
         if board[1][0] != 1 and board[1][0] != 2:
             board[1][0] = marker
             turns += 1
-            nextPlayer()
+          
     elif num == 4:
         if board[1][1] != 1 and board[1][1] != 2:
             board[1][1] = marker
             turns += 1
-            nextPlayer()
+            
     elif num == 5:
         if board[1][2] != 1 and board[1][2] != 2:
             board[1][2] = marker
             turns += 1
-            nextPlayer()
+           
     elif num == 6:
         if board[2][0] != 1 and board[2][0] != 2:
             board[2][0] = marker
             turns += 1
-            nextPlayer()
+         
     elif num == 7:
         if board[2][1] != 1 and board[2][1] != 2:
             board[2][1] = marker
             turns += 1
-            nextPlayer()
+           
     elif num == 8:
         if board[2][2] != 1 and board[2][2] != 2:
             board[2][2] = marker
             turns += 1
-            nextPlayer()
+            
 
 # Get Location of square
 
-def getSquareLocation(num):
-    
+def getSquareLocation(num):  
     if num == 0:
         return ( int(w/6) , int(h/6) )
     elif num == 1:
@@ -226,8 +241,7 @@ def getSquareLocation(num):
     
 
 # Determine which square the mouse is in
-def getSquarefromMouse(x):
-   
+def getSquarefromMouse(x):   
     width, height = int(w/3), int(h/3)
     row0height = range(0, height)
     row1height = range(height, 2*height)
@@ -264,23 +278,12 @@ def getSquarefromMouse(x):
         #print("Square 8!")
         return 8
    
-
-
 # Game Loop
-
 while not gameOver:
-    #get new window dimensions
-    w, h = pygame.display.get_surface().get_size()
-
-    if w > h:
-        radius = h
-    else:
-        radius = w
-
+    updateWindow()
     drawText()
     drawLines()
     drawMoves()
-
     for event in pygame.event.get():
         if event.type == QUIT:
             gameOver = True
@@ -298,7 +301,7 @@ while not gameOver:
                 gameOver = playAgain(1)
                 turns = 0     
             else:
-                pass
+                nextPlayer()
     pygame.display.update()
 
             
