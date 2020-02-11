@@ -10,15 +10,22 @@ pygame.init()
 # Create the game window
 window = pygame.display.set_mode((500,500), HWSURFACE| DOUBLEBUF | RESIZABLE)
 
-# Title, Icon and Text
+# Title, Icon and Text -- Disabled for turn in - don't want to upload a zip with the png. uploading just this .py file instead.
+"""
 pygame.display.set_caption("TicTacToe")
 icon = pygame.image.load('tictactoe.png')
 pygame.display.set_icon(icon)
 # --- Icons made by "https://www.flaticon.com/authors/ultimatearm" ---
+
+"""
 font = pygame.font.Font('freesansbold.ttf', 16)
 
 # Boolean for game loop
 gameOver = False
+
+#global variables for the start of game
+turns = 0
+player = 'X'
 
 # Representation of game board
 board = [
@@ -115,10 +122,6 @@ def playAgain(num):
                 else:
                     return True
 
-   
-        
-  
-
 # Draw player moves
 def drawMoves():
     s = 0
@@ -138,31 +141,65 @@ def drawMoves():
     pygame.display.update()
 
 
+def nextPlayer():
+    global player
+    if player == 'X':
+        player = 'O'
+    else:
+        player = 'X'
 
 # Update the board
 def updateBoard(num, player):
+    global turns
     if player == 'X':
         marker = 1
     else:
         marker = 2
     if num == 0:
-        board[0][0] = marker
+        if board[0][0] != 1 and board[0][0] != 2:
+            board[0][0] = marker
+            turns += 1
+            nextPlayer()
     elif num == 1:
-        board[0][1] = marker
+        if board[0][1] != 1 and board[0][1] != 2:
+            board[0][1] = marker
+            turns += 1
+            nextPlayer()
     elif num == 2:
-        board[0][2] = marker
-    elif num == 3:
-        board[1][0] = marker
+        if board[0][2] != 1 and board[0][2] != 2:
+            board[0][2] = marker
+            turns += 1
+            nextPlayer()
+    elif num == 3:      
+        if board[1][0] != 1 and board[1][0] != 2:
+            board[1][0] = marker
+            turns += 1
+            nextPlayer()
     elif num == 4:
-        board[1][1] = marker
+        if board[1][1] != 1 and board[1][1] != 2:
+            board[1][1] = marker
+            turns += 1
+            nextPlayer()
     elif num == 5:
-        board[1][2] = marker
+        if board[1][2] != 1 and board[1][2] != 2:
+            board[1][2] = marker
+            turns += 1
+            nextPlayer()
     elif num == 6:
-        board[2][0] = marker
+        if board[2][0] != 1 and board[2][0] != 2:
+            board[2][0] = marker
+            turns += 1
+            nextPlayer()
     elif num == 7:
-        board[2][1] = marker
+        if board[2][1] != 1 and board[2][1] != 2:
+            board[2][1] = marker
+            turns += 1
+            nextPlayer()
     elif num == 8:
-        board[2][2] = marker
+        if board[2][2] != 1 and board[2][2] != 2:
+            board[2][2] = marker
+            turns += 1
+            nextPlayer()
 
 # Get Location of square
 
@@ -228,18 +265,18 @@ def getSquarefromMouse(x):
         return 8
    
 
-player = 'X'
+
 # Game Loop
-turns = 0
+
 while not gameOver:
-    print(turns)
     #get new window dimensions
     w, h = pygame.display.get_surface().get_size()
+
     if w > h:
         radius = h
     else:
-
         radius = w
+
     drawText()
     drawLines()
     drawMoves()
@@ -253,7 +290,6 @@ while not gameOver:
             square = getSquarefromMouse(pygame.mouse.get_pos())
             updateBoard(square, player)
             drawMoves()
-            turns += 1
             gameOver = checkWin() or checkDraw()
             if checkDraw():
                 gameOver = playAgain(0)
@@ -262,11 +298,7 @@ while not gameOver:
                 gameOver = playAgain(1)
                 turns = 0     
             else:
-                if player == 'X':
-                    player = 'O'
-                else:
-                    player = 'X'
-
+                pass
     pygame.display.update()
 
             
