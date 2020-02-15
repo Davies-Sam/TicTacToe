@@ -86,7 +86,7 @@ def checkWin():
     else:
         return False
 
-# check for a draw
+# Check for a draw
 def checkDraw():
     if not checkWin() and turns == 9:
         return True
@@ -175,50 +175,51 @@ def updateBoard(num, player):
         if board[0][0] != 1 and board[0][0] != 2:
             board[0][0] = marker
             turns += 1
-         
+            return True
     elif num == 1:
         if board[0][1] != 1 and board[0][1] != 2:
             board[0][1] = marker
             turns += 1
-          
+            return True
     elif num == 2:
         if board[0][2] != 1 and board[0][2] != 2:
             board[0][2] = marker
             turns += 1
-           
+            return True
     elif num == 3:      
         if board[1][0] != 1 and board[1][0] != 2:
             board[1][0] = marker
             turns += 1
-          
+            return True
     elif num == 4:
         if board[1][1] != 1 and board[1][1] != 2:
             board[1][1] = marker
             turns += 1
-            
+            return True
     elif num == 5:
         if board[1][2] != 1 and board[1][2] != 2:
             board[1][2] = marker
             turns += 1
-           
+            return True
     elif num == 6:
         if board[2][0] != 1 and board[2][0] != 2:
             board[2][0] = marker
             turns += 1
-         
+            return True
     elif num == 7:
         if board[2][1] != 1 and board[2][1] != 2:
             board[2][1] = marker
             turns += 1
-           
+            return True
     elif num == 8:
         if board[2][2] != 1 and board[2][2] != 2:
             board[2][2] = marker
             turns += 1
-            
-
+            return True
+    else:
+        return False
+        
 # Get Location of square
-
 def getSquareLocation(num):  
     if num == 0:
         return ( int(w/6) , int(h/6) )
@@ -251,31 +252,22 @@ def getSquarefromMouse(x):
     col2width = range(2*width, w)
     
     if x[0] in col0width and x[1] in row0height:
-        #print("Square 0!")
         return 0
     elif x[0] in col1width and x[1] in row0height:
-        #print("Square 1!")
         return 1
     elif x[0] in col2width and x[1] in row0height:
-        #print("Square 2!")
         return 2
     elif x[0] in col0width and x[1] in row1height:
-        #print("Square 3!")
         return 3
     elif x[0] in col1width and x[1] in row1height:
-        #print("Square 4!")
         return 4
     elif x[0] in col2width and x[1] in row1height:
-        #print("Square 5!")
         return 5
     elif x[0] in col0width and x[1] in row2height:
-        #print("Square 6!")
         return 6
     elif x[0] in col1width and x[1] in row2height:
-        #print("Square 7!")
         return 7
     elif x[0] in col2width and x[1] in row2height:
-        #print("Square 8!")
         return 8
    
 # Game Loop
@@ -291,7 +283,8 @@ while not gameOver:
             window = pygame.display.set_mode(event.dict['size'], HWSURFACE|DOUBLEBUF|RESIZABLE)
         elif event.type == MOUSEBUTTONDOWN:
             square = getSquarefromMouse(pygame.mouse.get_pos())
-            updateBoard(square, player)
+            if updateBoard(square, player):
+                nextPlayer()
             drawMoves()
             gameOver = checkWin() or checkDraw()
             if checkDraw():
@@ -300,8 +293,6 @@ while not gameOver:
             elif checkWin():
                 gameOver = playAgain(1)
                 turns = 0     
-            else:
-                nextPlayer()
     pygame.display.update()
 
             
