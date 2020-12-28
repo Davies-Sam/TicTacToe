@@ -291,6 +291,7 @@ while not gameOver:
                 gameOver = playAgain(0)
                 turns = 0
             elif checkWin():
+                playAgain()
                 gameOver = playAgain(1)
                 turns = 0     
     pygame.display.update()
