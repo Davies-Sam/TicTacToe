@@ -284,16 +284,18 @@ while not gameOver:
         elif event.type == MOUSEBUTTONDOWN:
             square = getSquarefromMouse(pygame.mouse.get_pos())
             if updateBoard(square, player):
+                #update board state
+                drawMoves()
+                #check if board is in an end state
+                if checkDraw():
+                    gameOver = playAgain(0)
+                    turns = 0
+                elif checkWin():
+                    gameOver = playAgain(1)
+                    turns = 0 
                 nextPlayer()
-            drawMoves()
-            gameOver = checkWin() or checkDraw()
-            if checkDraw():
-                gameOver = playAgain(0)
-                turns = 0
-            elif checkWin():
-                playAgain()
-                gameOver = playAgain(1)
-                turns = 0     
+            
+                
     pygame.display.update()
 
             
